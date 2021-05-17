@@ -26,7 +26,7 @@ module.exports.postcss = true;
  */
 
 /**
- * Postcss plugin to validate default value of CSS custom properties
+ * Postcss plugin to validate fallback value of CSS custom properties
  *
  * @param {Object} opts - plugin options
  * @param {Object} opts.properties - CSS custom properties to validate values from
@@ -34,11 +34,7 @@ module.exports.postcss = true;
  * @param {requestCallback} opts.callback [callback=() => {}] - callback to handle the response
  * @returns Object
  */
-function validateCustomProps({
-  properties,
-  write = false,
-  callback = noop,
-} = {}) {
+function validateCustomProps({ properties, write = false, callback = noop }) {
   if (!properties) {
     throw new Error("No properties present in options");
   }
@@ -58,10 +54,10 @@ function validateCustomProps({
           const { key, value } = customProp;
           const expected = properties[key];
 
-          // exit if a custom property does not exist in `properties`
+          // exit if a custom property does not exist in `properties` plugin options
           if (!expected) return;
 
-          // exit if the default value of a custom property is correct
+          // exit if the fallback value of the custom property is correct
           if (value === expected) return;
 
           wrongProps.push({
@@ -72,13 +68,11 @@ function validateCustomProps({
             expected,
           });
 
-          if (write) {
-            decl.replaceWith({
-              prop: decl.prop,
-              raws: decl.raws,
-              value: `var(${key}, ${expected})`,
-            });
-          }
+          decl.replaceWith({
+            prop: decl.prop,
+            raws: decl.raws,
+            value: `var(${key}, ${expected})`,
+          });
         },
         OnceExit(root) {
           const resultant = root.toResult().css;

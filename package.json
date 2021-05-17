@@ -1,7 +1,7 @@
 {
   "name": "postcss-customprop-validate",
   "version": "0.0.0",
-  "description": "PostCSS plugin to validate default values of CSS custom properties",
+  "description": "PostCSS plugin to validate fallback values of CSS custom properties",
   "keywords": [
     "postcss",
     "css",
