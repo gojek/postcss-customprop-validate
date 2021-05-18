@@ -171,9 +171,8 @@ const properties = {
 postcss([plugin({ properties })])
   .process(css, { from: cssPath })
   .then((result) => {
-    console.log(result.css);
-    console.log(result.wrongProps);
-    /* handle the result */
+    /* console.log(result.css); */
+    /* console.log(result.wrongProps); */
   });
 ```
 

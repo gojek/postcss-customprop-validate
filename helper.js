@@ -52,6 +52,19 @@ const hasCustomProp = (tree) => tree[0].children && !!tree.find(isFunction);
 
 const noop = () => {};
 
+/**
+ * @typedef CustomProp
+ * @property {string} key - key of the custom property
+ * @property {string} value - value of the custom property
+ */
+/**
+ * Validates if a Declaration node has a CSS custom property
+ * If yes, returns its key and value
+ * Else, returns `undefined`
+ *
+ * @param {Object} declaration declaration node
+ * @returns {(CustomProp|undefined)}
+ */
 const getCustomProp = (declaration) => {
   const astObject = toPlainObject(
     parse(declaration.value, { context: "value" })

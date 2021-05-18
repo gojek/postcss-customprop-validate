@@ -18,6 +18,10 @@ async function run(input, opts = {}) {
 }
 
 describe("postcss-validate-customprop", () => {
+  afterAll(() => {
+    jest.resetModules();
+  });
+
   test("validates CSS", async () => {
     const properties = {
       "--border-radius": "4px",
