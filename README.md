@@ -1,59 +1,46 @@
 # PostCSS Customprop Validate
 
-[PostCSS] plugin to validate fallback values of CSS custom properties.
+[PostCSS] plugin to validate [fallback values] of CSS custom properties.
 
-Validating the fallback values of CSS custom properties manually can be error prone and challening if they are huge in number. This plugin removes this effort altogether.
+Validating the fallback values of CSS custom properties manually can be error prone and challening, specially if there are many.
 
-The plugin accepts an object containing custom properties in plugin [options]. Using it as the source of truth, the plugin validates the CSS and finds out the custom properties with incorrect fallback values.
+This plugin validates the CSS and returns custom properties with incorrect fallback values. It can also modify the source CSS file with the updated values.
 
-The plugin can also modify the source file with the updated CSS -- with correct fallback values. See `write` under [options]
+## Usage
 
-> If you use a code formatter like [prettier], you may need to re-run it after the plugin modifies the source file.
+```js
+const { readFileSync } = require("fs");
+const postcss = require("postcss");
+const path = require("path");
+
+const plugin = require("./index");
+
+const cssPath = path.resolve("./sample.css");
+const css = readFileSync(cssPath, "utf-8");
+const properties = {
+  /* key and expected fallback values of custom properties */
+};
+
+postcss([plugin({ properties, write: false, callback: () => {} })])
+  .process(css, { from: cssPath })
+  .then((result) => {
+    /* handle the result */
+  });
+```
+
+See [PostCSS] docs for examples for your environment.
 
 ## Options
 
-The plugin accepts 3 options:
+The plugin accepts an object containing 3 properties:
 
-**`properties`**
+### **`properties`**
 
-An object containg key and fallback values of custom properties
+Required: `true`
 
-| type   | required | default |
-| ------ | -------- | ------- |
-| Object | true     | N/A     |
+An object containg key and expected fallback values of custom properties. The plugin uses it as the source of truth to validate the CSS.
 
-**`write`**
-
-Writes the source CSS file with the updated CSS
-
-| type    | required | default |
-| ------- | -------- | ------- |
-| boolean | false    | false   |
-
-**`callback`**
-
-Callback to handle the response of the plugin. The callback accepts 2 arguments:
-
-- error: an error object
-- data: the response
-
-| type     | required | default  |
-| -------- | -------- | -------- |
-| Function | false    | () => {} |
-
-## Response
-
-The response is a list of object of custom properties with incorrect fallback values. The plugin's result also contains the response -- `result.wrongProps`. Shape of the object:
-
-- `path` {string} - absolute path of the CSS file
-- `line` {number} - line number containing the custom property
-- `key` {string} - key of the custom property
-- `current` {string} - current fallback value
-- `expexted` {string} - expected fallback value
-
-## Example
-
-Sample `properties` option:
+Example:
 
 ```json
 {
@@ -63,6 +50,32 @@ Sample `properties` option:
     "var(--border-radius, 4px) solid var(--color-red, #ff0000)",
 };
 ```
+
+### **`write`**
+
+Default: `false`
+
+Modifies the source CSS file with the correct fallback values.
+
+#### Formatting
+
+The plugin does not preserves the code formatting. If you use a code formatter like [prettier], you may need to re-run it after the plugin modifies the source file.
+
+### **`callback`**
+
+Default: `() => {}`
+
+Callback to handle the output of the plugin. The callback accepts 2 arguments. The first argument is an error object. The second argument is an array of objects. Each object represents an incorrect fallback value having the following shape:
+
+- `path` - absolute path of the CSS file
+- `line` - line number containing the custom property
+- `key` - key of the custom property
+- `current` - current fallback value
+- `expected` - expected fallback value
+
+The second argument is also available in the plugin's result as `result.wrongProps`
+
+## Example
 
 A sample CSS:
 
@@ -98,7 +111,7 @@ The resultant CSS that the plugin produces:
 }
 ```
 
-List of the incorrect custom properties ([response]).
+Custom properties with incorrect fallback values:
 
 ```js
 [
@@ -119,64 +132,8 @@ List of the incorrect custom properties ([response]).
 ];
 ```
 
-## Usage
-
-### Add to plugins list
-
-**Step 1:** Install plugin:
-
-```sh
-npm install --save-dev postcss postcss-customprop-validate
-```
-
-**Step 2:** Check you project for existing PostCSS config: `postcss.config.js`
-in the project root, `"postcss"` section in `package.json`
-or `postcss` in bundle config.
-
-If you do not use PostCSS, add it according to [official docs]
-and set this plugin in settings.
-
-**Step 3:** Add the plugin to plugins list:
-
-```diff
-+const properties = {
-+ "--color-red": "#ff0000",
-+}
-
-module.exports = {
-  plugins: [
-+    require('postcss-customprop-validate')({ properties })
-     require("autoprefixer")
-  ]
-}
-
-```
-
-### Programmatic
-
-```js
-const { readFileSync } = require("fs");
-const postcss = require("postcss");
-
-const plugin = require("./index");
-const path = require("path");
-
-const cssPath = path.resolve("./sample.css");
-
-const css = readFileSync(cssPath, "utf-8");
-const properties = {
-  /* key and fallback values of custom properties */
-};
-
-postcss([plugin({ properties })])
-  .process(css, { from: cssPath })
-  .then((result) => {
-    /* console.log(result.css); */
-    /* console.log(result.wrongProps); */
-  });
-```
-
 [postcss]: https://github.com/postcss/postcss
+[fallback values]: https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties#custom_property_fallback_values
 [prettier]: https://github.com/prettier/prettier
 [options]: #options
 [response]: #response
