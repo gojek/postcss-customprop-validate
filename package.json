@@ -6,15 +6,18 @@
     "postcss",
     "css",
     "postcss-plugin",
-    "css variables",
-    "css custom properties"
+    "variables",
+    "custom properties"
   ],
   "scripts": {
     "test": "jest --coverage && eslint ."
   },
   "author": "abhinavpreetu <abhinavpreetu@gmail.com>",
   "license": "MIT",
-  "repository": "abhinavpreetu/postcss-customprop-validate",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gojek/postcss-customprop-validate"
+  },
   "engines": {
     "node": ">=10.0.0"
   },
