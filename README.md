@@ -1,4 +1,4 @@
-# PostCSS Customprop Validate
+# PostCSS Customprop Validate ![Test](https://github.com/gojek/postcss-customprop-validate/actions/workflows/test.yml/badge.svg)
 
 [PostCSS] plugin to validate [fallback values] of CSS custom properties.
 
@@ -9,22 +9,51 @@ This plugin validates the CSS and returns custom properties with incorrect fallb
 ## Usage
 
 ```js
-const { readFileSync } = require("fs");
 const postcss = require("postcss");
-const path = require("path");
+const plugin = require("postcss-customprop-validate");
+const { readFileSync } = require("fs");
 
-const plugin = require("./index");
-
-const cssPath = path.resolve("./sample.css");
+const cssPath = "./sample.css";
 const css = readFileSync(cssPath, "utf-8");
+/*
+{
+  font-size: 1rem;
+  color: var(--color-red, #fa0000);
+}
+*/
+
 const properties = {
-  /* key and expected fallback values of custom properties */
+  "--color-red": "#ff0000",
 };
 
-postcss([plugin({ properties, write: false, callback: () => {} })])
+const callback = (err, data) => {
+  if (err) {
+    console.error(err);
+  }
+  console.log(data);
+};
+
+postcss([
+  plugin({
+    properties,
+    write: false,
+    callback,
+  }),
+])
   .process(css, { from: cssPath })
   .then((result) => {
-    /* handle the result */
+    console.log(result.wrongProps);
+    /*
+     [
+       {
+         path: "./sample.js",
+         line: 3,
+         key: "--color-red",
+         current: "#fa0000",
+         expected: "#ff0000"
+       }
+     ]
+    */
   });
 ```
 
@@ -65,7 +94,7 @@ The plugin does not preserves the code formatting. If you use a code formatter l
 
 Default: `() => {}`
 
-Callback to handle the output of the plugin. The callback accepts 2 arguments. The first argument is an error object. The second argument is an array of objects. Each object represents an incorrect fallback value having the following shape:
+Callback to handle the output of the plugin. The plugin invokes the callback after it processes the CSS of each file. The callback accepts 2 arguments. The first argument is an error object. The second argument is an array of objects. Each object represents an incorrect fallback value having the following shape:
 
 - `path` - absolute path of the CSS file
 - `line` - line number containing the custom property

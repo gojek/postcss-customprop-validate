@@ -22,7 +22,7 @@ describe("postcss-validate-customprop", () => {
     jest.resetModules();
   });
 
-  test("validates CSS", async () => {
+  test("validates fallback values of custom properties", async () => {
     const properties = {
       "--border-radius": "4px",
       "--color-red": "#FF0000",

@@ -13,7 +13,7 @@ module.exports.postcss = true;
  * @property {number} line - line number containing the custom property
  * @property {string} key - key of the custom property
  * @property {string} current - current value of the custom property
- * @property {string} expexted - expected correct value of the custom property
+ * @property {string} expected - expected correct value of the custom property
  */
 
 /**
@@ -48,16 +48,16 @@ function validateCustomProps({ properties, write = false, callback = noop }) {
         Declaration(decl) {
           const customProp = getCustomProp(decl);
 
-          // exit if the declaration is not a custom property
+          // only process custom properties
           if (!customProp) return;
 
           const { key, value } = customProp;
           const expected = properties[key];
 
-          // exit if a custom property does not exist in `properties` plugin options
+          // only process if the custom property is defined in `properties` plugin option
           if (!expected) return;
 
-          // exit if the fallback value of the custom property is correct
+          // only process if the fallback value is incorrect
           if (value === expected) return;
 
           wrongProps.push({
@@ -75,6 +75,8 @@ function validateCustomProps({ properties, write = false, callback = noop }) {
           });
         },
         OnceExit(root) {
+          result.wrongProps = wrongProps;
+
           const resultant = root.toResult().css;
           const { file } = root.source.input;
 
@@ -83,8 +85,6 @@ function validateCustomProps({ properties, write = false, callback = noop }) {
           } else {
             callback(null, wrongProps);
           }
-
-          result.wrongProps = wrongProps;
         },
       };
     },
