@@ -1,6 +1,6 @@
 {
   "name": "postcss-customprop-validate",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "PostCSS plugin to validate fallback values of CSS custom properties",
   "keywords": [
     "postcss",
@@ -10,7 +10,8 @@
     "custom properties"
   ],
   "scripts": {
-    "test": "jest --coverage && eslint ."
+    "test": "jest --coverage && eslint .",
+    "publish": "clean-publish"
   },
   "author": "abhinavpreetu <abhinavpreetu@gmail.com>",
   "license": "MIT",
@@ -25,7 +26,7 @@
     "postcss": "^8.2.8"
   },
   "devDependencies": {
-    "clean-publish": "^2.1.0",
+    "clean-publish": "^2.2.0",
     "eslint": "^7.21.0",
     "eslint-plugin-jest": "^24.2.1",
     "jest": "^26.6.3",
@@ -65,5 +66,8 @@
         "statements": 100
       }
     }
+  },
+  "clean-publish": {
+    "packageManager": "yarn"
   }
 }

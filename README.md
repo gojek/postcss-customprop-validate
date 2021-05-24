@@ -1,4 +1,4 @@
-# PostCSS Customprop Validate ![Test](https://github.com/gojek/postcss-customprop-validate/actions/workflows/test.yml/badge.svg)
+# PostCSS Customprop Validate [![Build](https://img.shields.io/github/workflow/status/gojek/postcss-customprop-validate/Test)](https://github.com/gojek/postcss-customprop-validate/actions/workflows/test.yml)
 
 [PostCSS] plugin to validate [fallback values] of CSS custom properties.
 
@@ -29,6 +29,7 @@ const properties = {
 const callback = (err, data) => {
   if (err) {
     console.error(err);
+    return;
   }
   console.log(data);
 };
